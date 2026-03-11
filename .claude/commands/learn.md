@@ -1,5 +1,5 @@
 ---
-allowed-tools: WebFetch, Read, Write, Edit, Bash(git:*), Bash(cd:*), Bash(date:*)
+allowed-tools: WebFetch, Read, Write, Edit, Bash(git:*), Bash(cd:*), Bash(date:*), Bash(uvx yt-dlp*)
 description: Add a new learning entry to the journal
 ---
 
@@ -25,13 +25,29 @@ Ask the user for:
 
 If the user already provided this information with the command invocation, skip asking.
 
-### 2. Fetch URL (if applicable)
-If the source is a URL:
+### 2. Fetch content (if applicable)
+
+**YouTube URLs** (matching `youtube.com/watch` or `youtu.be/`):
+- Set `source.type` to `"youtube"`
+- First, get the video title:
+  ```
+  uvx yt-dlp --js-runtimes node --skip-download --print title "<URL>"
+  ```
+- Then, download subtitles (separate command — combining `--print` with subtitle download can skip writing):
+  ```
+  uvx yt-dlp --js-runtimes node --write-auto-sub --sub-lang en --sub-format vtt --skip-download -o "/tmp/yt-%(id)s" "<URL>"
+  ```
+  Subtitles are saved to `/tmp/yt-<VIDEO_ID>.en.vtt`. Extract the video ID from the URL.
+- Read the `.vtt` subtitle file and strip VTT formatting (timestamps, `<c>` tags, duplicate lines, headers) to get plain transcript text
+- Clean up the temp subtitle file after reading
+- If subtitles are unavailable, fall back to `WebFetch` and note that the summary is based on limited page metadata only
+
+**Other URLs**:
 - Use `WebFetch` to get the page content
 - Extract the page title and key content
 - If fetch fails, ask the user to provide a title manually
 
-If the source is text (not a URL), set `source.type` to `"text"` and use the user's description as the title. No URL field in this case.
+**Text (not a URL)**: set `source.type` to `"text"` and use the user's description as the title. No URL field in this case.
 
 ### 3. Generate entry
 Based on the source content and reason, generate:
@@ -52,7 +68,7 @@ The entry schema:
   "id": "<timestamp>",
   "date": "<YYYY-MM-DD>",
   "source": {
-    "type": "url | text",
+    "type": "url | youtube | text",
     "url": "https://...",
     "title": "Page Title"
   },

@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "id": "2026-03-11T15-13-48",
+      "date": "2026-03-11",
+      "source": {
+        "type": "youtube",
+        "url": "https://www.youtube.com/watch?v=vOFVx6rFGpI",
+        "title": "Ask the Engineers: RF-DETR Segmentation and Creating Best-in-Class Vision Models for the Edge"
+      },
+      "reason": "In depth RF-DETR video from the paper authors",
+      "summary": "Roboflow engineers (Isaac and Matt) discuss RF-DETR, a detection transformer that eliminates non-maximal suppression via cross-attention, yielding smoother tracking and better overlapping-object handling. A single checkpoint generates its Pareto curve by varying input resolution (not architecture), and aggressive per-layer learning rate decay during pre-training on large foundation backbones preserves generalization — winning on COCO while prioritizing transfer to custom datasets. The segmentation preview already outperforms YOLO v11 by ~10 mAP at comparable or lower latency on fair FP16+TensorRT benchmarks, and runs at 120 fps on an iPhone 16.",
+      "tags": ["rf-detr", "object-detection", "instance-segmentation", "transformer", "edge-deployment", "roboflow", "computer-vision"]
+    },
+    {
       "id": "2026-03-11T10-34-16",
       "date": "2026-03-11",
       "source": {
