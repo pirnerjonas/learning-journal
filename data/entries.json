@@ -1,6 +1,18 @@
 {
   "entries": [
     {
+      "id": "2026-03-11T10-34-16",
+      "date": "2026-03-11",
+      "source": {
+        "type": "url",
+        "url": "https://albumentations.ai/docs/1-introduction/what-are-image-augmentations/",
+        "title": "What Is Image Augmentation?"
+      },
+      "reason": "Super to develop vocabulary for computer vision terms — e.g. invariant vs equivariance, in-distribution vs out-of-distribution augmentation, and very in-depth overview for augmentation",
+      "summary": "Albumentations' guide covers the foundational vocabulary of image augmentation: invariance (prediction unchanged by transform) vs. equivariance (prediction changes predictably with transform), and in-distribution augmentations (realistic variations that densify training data) vs. out-of-distribution augmentations (unrealistic but label-preserving transforms that act as regularizers). It organizes transforms into families — geometric, photometric, blur/noise, occlusion, and composition — all governed by one rule: a human annotator must keep the same label after the transform.",
+      "tags": ["computer-vision", "augmentation", "albumentations", "machine-learning", "invariance", "regularization"]
+    },
+    {
       "id": "2026-03-11T10-00-00",
       "date": "2026-03-11",
       "source": {
