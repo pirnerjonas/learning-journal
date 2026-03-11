@@ -11,41 +11,6 @@
       "reason": "Super to develop vocabulary for computer vision terms — e.g. invariant vs equivariance, in-distribution vs out-of-distribution augmentation, and very in-depth overview for augmentation",
       "summary": "Albumentations' guide covers the foundational vocabulary of image augmentation: invariance (prediction unchanged by transform) vs. equivariance (prediction changes predictably with transform), and in-distribution augmentations (realistic variations that densify training data) vs. out-of-distribution augmentations (unrealistic but label-preserving transforms that act as regularizers). It organizes transforms into families — geometric, photometric, blur/noise, occlusion, and composition — all governed by one rule: a human annotator must keep the same label after the transform.",
       "tags": ["computer-vision", "augmentation", "albumentations", "machine-learning", "invariance", "regularization"]
-    },
-    {
-      "id": "2026-03-11T10-00-00",
-      "date": "2026-03-11",
-      "source": {
-        "type": "url",
-        "url": "https://docs.python.org/3/library/pathlib.html",
-        "title": "pathlib — Object-oriented filesystem paths"
-      },
-      "reason": "Wanted a reference for replacing os.path with pathlib in my projects",
-      "summary": "Python's pathlib module provides an object-oriented interface for filesystem paths. It offers classes like Path, PurePath, and platform-specific variants that make path manipulation more readable and less error-prone than traditional os.path string operations.",
-      "tags": ["python", "stdlib", "filesystem"]
-    },
-    {
-      "id": "2026-03-10T15-30-00",
-      "date": "2026-03-10",
-      "source": {
-        "type": "url",
-        "url": "https://htmx.org/essays/hypermedia-apis-vs-data-apis/",
-        "title": "Hypermedia APIs vs. Data APIs"
-      },
-      "reason": "Rethinking how I build web UIs — maybe I don't always need a JSON API + SPA",
-      "summary": "This essay distinguishes between hypermedia APIs (returning HTML for browser consumption) and data APIs (returning JSON for programmatic use). It argues that many web applications are better served by hypermedia approaches, which reduce complexity by eliminating the need for client-side state management.",
-      "tags": ["web", "architecture", "htmx", "api-design"]
-    },
-    {
-      "id": "2026-03-09T09-15-00",
-      "date": "2026-03-09",
-      "source": {
-        "type": "text",
-        "title": "Einops — Flexible tensor operations"
-      },
-      "reason": "Keep forgetting einops syntax, need a quick reference",
-      "summary": "Einops provides a readable and unified way to manipulate tensors across NumPy, PyTorch, and TensorFlow. Its rearrange, reduce, and repeat operations use a mini-language that makes dimension transformations explicit and self-documenting, replacing chains of reshape/transpose/squeeze calls.",
-      "tags": ["python", "machine-learning", "tensors", "einops"]
     }
   ]
 }
