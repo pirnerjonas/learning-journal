@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Journal</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body x-data="journal()" x-init="init()">
+  <header>
+    <h1>Learning Journal</h1>
+    <p class="entry-count" x-show="entries.length > 0" x-text="`${filtered.length} of ${entries.length} entries`"></p>
+  </header>
+
+  <main>
+    <div class="controls" x-show="entries.length > 0">
+      <input
+        type="search"
+        placeholder="Search entries..."
+        x-model.debounce.200ms="search"
+        class="search-input"
+      >
+      <div class="tag-cloud" x-show="allTags.length > 0">
+        <template x-for="tag in allTags" :key="tag">
+          <button
+            class="tag-pill"
+            :class="{ active: selectedTags.includes(tag) }"
+            @click="toggleTag(tag)"
+            x-text="tag"
+          ></button>
+        </template>
+        <button
+          class="tag-pill clear"
+          x-show="selectedTags.length > 0"
+          @click="selectedTags = []"
+        >clear</button>
+      </div>
+    </div>
+
+    <div class="card-grid" x-show="filtered.length > 0">
+      <template x-for="entry in filtered" :key="entry.id">
+        <article class="card">
+          <div class="card-header">
+            <time x-text="entry.date"></time>
+            <span class="source-type" x-text="entry.source.type"></span>
+          </div>
+          <h2>
+            <template x-if="entry.source.url">
+              <a :href="entry.source.url" target="_blank" rel="noopener" x-text="entry.source.title"></a>
+            </template>
+            <template x-if="!entry.source.url">
+              <span x-text="entry.source.title"></span>
+            </template>
+          </h2>
+          <p class="summary" x-text="entry.summary"></p>
+          <div class="card-tags">
+            <template x-for="tag in entry.tags" :key="tag">
+              <button
+                class="tag-pill small"
+                :class="{ active: selectedTags.includes(tag) }"
+                @click="toggleTag(tag)"
+                x-text="tag"
+              ></button>
+            </template>
+          </div>
+          <p class="reason" x-show="entry.reason" x-text="entry.reason"></p>
+        </article>
+      </template>
+    </div>
+
+    <div class="empty-state" x-show="entries.length === 0">
+      <p>No entries yet.</p>
+      <p>Use <code>/learn</code> in Claude Code to add your first entry.</p>
+    </div>
+
+    <div class="empty-state" x-show="entries.length > 0 && filtered.length === 0">
+      <p>No entries match your search.</p>
+    </div>
+  </main>
+</body>
+</html>
