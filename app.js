@@ -1,8 +1,21 @@
+import {
+  load as loadModel,
+  onStatus,
+  indexEntries,
+  search as semanticSearch,
+} from "./semantic-search.js";
+
 function journal() {
   return {
     entries: [],
     search: "",
     selectedTags: [],
+
+    // Semantic search state
+    semanticMode: false,
+    modelStatus: "idle", // idle | loading | ready | error
+    embeddings: null, // Map<id, vec>
+    semanticResults: null, // [{id, score}] or null
 
     async init() {
       try {
@@ -13,6 +26,50 @@ function journal() {
         console.error("Failed to load entries:", e);
         this.entries = [];
       }
+
+      onStatus((status) => {
+        this.modelStatus = status;
+      });
+    },
+
+    async enableSemantic() {
+      this.semanticMode = true;
+      if (this.modelStatus === "ready") return;
+
+      try {
+        await loadModel();
+        this.embeddings = await indexEntries(this.entries);
+      } catch (e) {
+        console.error("Semantic search failed to load:", e);
+        this.modelStatus = "error";
+        this.semanticMode = false;
+      }
+    },
+
+    disableSemantic() {
+      this.semanticMode = false;
+      this.semanticResults = null;
+    },
+
+    toggleSemantic() {
+      if (this.semanticMode) {
+        this.disableSemantic();
+      } else {
+        this.enableSemantic();
+      }
+    },
+
+    async doSemanticSearch() {
+      if (
+        !this.semanticMode ||
+        this.modelStatus !== "ready" ||
+        !this.embeddings ||
+        !this.search.trim()
+      ) {
+        this.semanticResults = null;
+        return;
+      }
+      this.semanticResults = await semanticSearch(this.search, this.embeddings);
     },
 
     get allTags() {
@@ -34,6 +91,25 @@ function journal() {
         );
       }
 
+      // Semantic ranking mode
+      if (
+        this.semanticMode &&
+        this.semanticResults &&
+        this.search.trim()
+      ) {
+        const idOrder = new Map(
+          this.semanticResults.map((r, i) => [r.id, i])
+        );
+        const scoreMap = new Map(
+          this.semanticResults.map((r) => [r.id, r.score])
+        );
+        result = result
+          .filter((e) => scoreMap.has(e.id) && scoreMap.get(e.id) > 0.15)
+          .sort((a, b) => (idOrder.get(a.id) ?? 999) - (idOrder.get(b.id) ?? 999));
+        return result;
+      }
+
+      // Text search fallback
       if (this.search.trim()) {
         const q = this.search.toLowerCase();
         result = result.filter((entry) => {
@@ -52,6 +128,13 @@ function journal() {
       return result;
     },
 
+    /** Get semantic score for an entry (for display) */
+    scoreFor(entryId) {
+      if (!this.semanticResults) return null;
+      const r = this.semanticResults.find((r) => r.id === entryId);
+      return r ? r.score : null;
+    },
+
     toggleTag(tag) {
       const idx = this.selectedTags.indexOf(tag);
       if (idx === -1) {
@@ -62,3 +145,6 @@ function journal() {
     },
   };
 }
+
+// Expose globally for Alpine
+window.journal = journal;
