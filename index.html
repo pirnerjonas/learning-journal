@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Learning Journal</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="app.js"></script>
+  <script type="module" src="app.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="journal()" x-init="init()">
@@ -16,12 +16,29 @@
 
   <main>
     <div class="controls" x-show="entries.length > 0">
-      <input
-        type="search"
-        placeholder="Search entries..."
-        x-model.debounce.200ms="search"
-        class="search-input"
-      >
+      <div class="search-row">
+        <input
+          type="search"
+          :placeholder="semanticMode ? 'Semantic search...' : 'Search entries...'"
+          x-model.debounce.400ms="search"
+          @input.debounce.400ms="doSemanticSearch()"
+          class="search-input"
+        >
+        <button
+          class="semantic-toggle"
+          :class="{ active: semanticMode, loading: modelStatus === 'loading' }"
+          @click="toggleSemantic()"
+          :title="semanticMode ? 'Switch to text search' : 'Enable AI semantic search (WebGPU)'"
+        >
+          <span x-show="modelStatus !== 'loading'">AI</span>
+          <span x-show="modelStatus === 'loading'" class="spinner"></span>
+        </button>
+      </div>
+
+      <p class="model-hint" x-show="modelStatus === 'loading'">
+        Loading embedding model... (first time downloads ~30 MB)
+      </p>
+
       <div class="tag-cloud" x-show="allTags.length > 0">
         <template x-for="tag in allTags" :key="tag">
           <button
@@ -44,7 +61,14 @@
         <article class="card">
           <div class="card-header">
             <time x-text="entry.date"></time>
-            <span class="source-type" x-text="entry.source.type"></span>
+            <div class="card-header-right">
+              <span
+                class="score-badge"
+                x-show="semanticMode && search.trim() && scoreFor(entry.id) !== null"
+                x-text="scoreFor(entry.id) !== null ? Math.round(scoreFor(entry.id) * 100) + '%' : ''"
+              ></span>
+              <span class="source-type" x-text="entry.source.type"></span>
+            </div>
           </div>
           <h2>
             <template x-if="entry.source.url">
